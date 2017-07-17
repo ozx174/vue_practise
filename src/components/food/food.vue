@@ -34,8 +34,29 @@
         <split></split>
         <div class="rating">
           <h1 class="title">商品评价</h1>
-          <ratingselect :selectType="selectType" :onlyContent="onlyContent" :desc="desc"
-                        :ratings="food.ratings"></ratingselect>
+          <ratingselect :selectType="selectType"
+                        :onlyContent="onlyContent"
+                        :desc="desc"
+                        :ratings="food.ratings"
+                        @select="ratingSelectType"
+                        @toggle="toggle"></ratingselect>
+          <div class="rating-wrapper">
+            <ul v-show="food.ratings && food.ratings.length">
+              <li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings"
+                  class="rating-item border-1px">
+                <div class="user">
+                  <span class="name">{{rating.username}}</span>
+                  <img :src="rating.avatar" alt="" class="avatar" width="12" height="12">
+                </div>
+                <div class="time">{{rating.rateTime | date}}</div>
+                <p class="text">
+                  <span :class="{'icon-thumb_up':rating.rateType===0,'icon-thumb_down':rating.rateType===1}"></span>
+                  <span>{{rating.text}}</span>
+                </p>
+              </li>
+            </ul>
+            <div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
+          </div>
         </div>
       </div>
     </div>
@@ -47,9 +68,8 @@
   import cartcontrol from 'components/cartcontrol/cartcontrol';
   import split from 'components/split/split';
   import ratingselect from 'components/ratingselect/ratingselect';
+  import {formatDate} from 'Common/js/date';
 
-  //  const POSITIVE = 0;
-  //  const NEGATIVE = 1;
   const ALL = 2;
   export default{
     props: {
@@ -73,6 +93,12 @@
       cartcontrol,
       split,
       ratingselect
+    },
+    filters: {
+      formatDate(time) {
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd hh:mm');
+      }
     },
     methods: {
       show() {
@@ -101,12 +127,35 @@
       },
       addFood(target) {
         this.$emit('add', target);
+      },
+      ratingSelectType(type) {
+        this.selectType = type;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
+      toggle() {
+        this.onlyContent = !this.onlyContent;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
+      needShow(type, text) {
+        if (this.onlyContent && !text) {
+          return false;
+        }
+        if (this.selectType === ALL) {
+          return true;
+        } else {
+          return type === this.selectType;
+        }
       }
     }
   };
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import '../../Common/stylus/mixin.styl'
   .food
     position: fixed
     left: 0
@@ -205,4 +254,45 @@
         line-height: 14px
         margin-left: 18px
         color: rgb(7, 17, 27)
+      .rating-wrapper
+        padding: 0 18px
+        .rating-item
+          position: relative
+          padding: 16px 0
+          border-1px(rgba(7, 17, 27, .1))
+          .user
+            position: absolute
+            right: 0
+            top: 16px
+            font-size: 0
+            line-height: 12px
+            .name
+              display: inline-block
+              vertical-align: top
+              font-size: 10px
+              color: rgb(147, 153, 159)
+              margin-right: 6px
+            .avatar
+              border-radius: 50%
+          .time
+            font-size: 10px
+            line-height: 12px
+            color: rgb(147, 153, 159)
+            margin-bottom: 6px
+          .text
+            line-height: 16px
+            font-size: 12px
+            color: rgb(7, 17, 27)
+            .icon-thumb_up, .icon-thumb_down
+              line-height: 16px
+              margin-right: 4px
+              font-size: 12px
+            .icon-thumb_up
+              color: rgb(0, 160, 220)
+            .icon-thumb_down
+              color: rgb(147, 153, 159)
+        .no-rating
+          padding: 16px 0
+          font-size: 12px
+          color: rgb(147, 153, 159)
 </style>

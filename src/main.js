@@ -6,6 +6,7 @@ import routes from './router/router';
 import VueResource from 'vue-resource';
 import './Common/stylus/index.styl';
 import store from './store/';
+import filter from './Common/filter/filter';
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
@@ -18,5 +19,6 @@ const router = new VueRouter({
 /* eslint-disable no-new */
 new Vue({
   router,
-  store
+  store,
+  filter
 }).$mount('#app');
