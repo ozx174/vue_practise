@@ -113,7 +113,7 @@
       .content
         display: inline-block
         font-size: 14px
-        margin-left: 16px
+        margin-left: 10px
         .title
           margin: 2px 0 8px
           .brand
