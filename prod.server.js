@@ -1,6 +1,6 @@
 var express = require('express');
 var config = require('./config');
-
+var path = require('path');
 var port = process.env.PORT || config.build.port;
 
 var app = express();
@@ -8,8 +8,9 @@ var app = express();
 var router = express.Router();
 
 router.get('/', function (req, res, next) {
-  req.url = '/index.html';
-  next();
+  // req.url = '/index.html';
+  res.sendFile(path.join(__dirname, 'dist/index.html'));
+  //next();
 });
 
 app.use(router);

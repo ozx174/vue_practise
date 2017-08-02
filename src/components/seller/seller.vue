@@ -148,7 +148,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  @import "../../common/stylus/mixin.styl"
+  @import "../../Common/stylus/mixin.styl"
   .seller
     position: fixed
     top: 180px
